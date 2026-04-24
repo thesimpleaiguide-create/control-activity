@@ -27,71 +27,100 @@
         .drop-zone.drag-over {
             border-color: #3b82f6;
             background: #eff6ff;
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.1);
         }
         .modal-overlay {
-            background-color: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(4px);
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
         }
-        .font-main { font-family: sans-serif; }
+        .font-main { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 font-main p-4 md:p-8">
 
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
-        <div class="bg-[#1e293b] text-white p-6 rounded-t-xl text-center shadow-lg">
+        <div class="bg-[#1e293b] text-white p-6 rounded-t-2xl text-center shadow-xl border-b border-slate-700">
             <h1 class="text-xl md:text-2xl font-bold mb-2">Some of these belong to you. Some never did.</h1>
-            <p class="text-slate-300 italic">Drag each card to where it truly belongs.</p>
+            <p class="text-slate-400 italic">Drag each card to where it truly belongs.</p>
         </div>
 
         <!-- Main Board -->
-        <div class="bg-white border-x border-b border-slate-200 rounded-b-xl p-6 shadow-sm">
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl p-6 shadow-md">
             
             <!-- Source Area -->
-            <div id="source-container" class="flex justify-center items-center mb-10">
-                <div id="active-card-slot" class="w-full max-w-md h-48 flex items-center justify-center border-2 border-slate-100 rounded-xl bg-slate-50 relative">
+            <div id="source-container" class="flex flex-col items-center mb-10">
+                <div id="active-card-slot" class="w-full max-w-md h-52 flex items-center justify-center border-2 border-slate-100 rounded-2xl bg-slate-50/50 relative p-4">
                     <!-- Cards will be injected here -->
+                </div>
+                <div id="deck-counter" class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-tighter">
+                    Remaining Scenarios: <span id="cards-left">12</span>
                 </div>
             </div>
 
             <!-- Targets -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Out of Control -->
-                <div id="out-of-control" class="drop-zone p-6 rounded-xl flex flex-col items-center text-center transition-all" ondrop="handleDrop(event, 'out')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-blue-900 font-bold text-lg mb-2">Out of My Control</div>
+                <div id="out-of-control" class="drop-zone p-8 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'out')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </div>
+                    <div class="text-slate-800 font-bold text-xl mb-1">Out of My Control</div>
                     <div class="text-slate-500 text-sm italic mb-4">(Let it go)</div>
-                    <div id="count-out" class="text-xs font-semibold text-slate-400 uppercase tracking-widest">0 Items</div>
+                    <div id="count-out" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-xs font-bold">0 Items</div>
                 </div>
 
                 <!-- In My Control -->
-                <div id="in-control" class="drop-zone p-6 rounded-xl flex flex-col items-center text-center transition-all" ondrop="handleDrop(event, 'in')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
-                    <div class="text-blue-900 font-bold text-lg mb-2">In My Control</div>
+                <div id="in-control" class="drop-zone p-8 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'in')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div class="text-slate-800 font-bold text-xl mb-1">In My Control</div>
                     <div class="text-slate-500 text-sm italic mb-4">(I am accountable)</div>
-                    <div id="count-in" class="text-xs font-semibold text-slate-400 uppercase tracking-widest">0 Items</div>
+                    <div id="count-in" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-xs font-bold">0 Items</div>
                 </div>
             </div>
         </div>
 
-        <!-- Completion Message -->
-        <div id="completion-ui" class="hidden mt-8 text-center p-8 bg-green-50 border border-green-200 rounded-xl">
-            <h2 class="text-2xl font-bold text-green-800 mb-2">Well Done!</h2>
-            <p class="text-green-700">You have successfully categorized all scenarios.</p>
-            <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Start Over</button>
+        <!-- Completion UI -->
+        <div id="completion-ui" class="hidden mt-8 text-center p-10 bg-white border border-slate-200 rounded-2xl shadow-xl">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h2 class="text-3xl font-black text-slate-800 mb-2">Great job!</h2>
+            <p class="text-slate-600 max-w-md mx-auto mb-6">You've successfully recognized that external triggers are out of your control, but your internal processing remains yours.</p>
+            <button onclick="location.reload()" class="px-8 py-3 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                Restart Exercise
+            </button>
         </div>
     </div>
 
     <!-- Modal for Feedback -->
     <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all">
-            <div class="p-8">
-                <div id="modal-icon" class="w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                    <!-- Icon SVG -->
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+            <div class="p-8 md:p-10">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight">Pause & Reflect</h3>
                 </div>
-                <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
-                <p id="modal-bold-text" class="text-slate-800 font-bold mb-4"></p>
-                <p id="modal-italic-text" class="text-slate-600 italic border-l-4 border-blue-500 pl-4 py-2 bg-blue-50"></p>
-                <button onclick="closeModal()" class="mt-8 w-full py-3 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition shadow-lg">
-                    Continue
+                
+                <p id="modal-bold-text" class="text-slate-800 font-bold text-lg leading-relaxed mb-6"></p>
+                
+                <div class="bg-slate-50 border-l-4 border-blue-500 p-5 rounded-r-xl">
+                    <p id="modal-italic-text" class="text-slate-600 italic text-base leading-relaxed"></p>
+                </div>
+
+                <button onclick="closeModal()" class="mt-8 w-full py-4 bg-[#1e293b] text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-lg hover:shadow-xl active:scale-[0.98]">
+                    Continue to Next Card
                 </button>
             </div>
         </div>
@@ -120,26 +149,34 @@
 
         function renderNextCard() {
             const container = document.getElementById('active-card-slot');
+            const counterLabel = document.getElementById('cards-left');
             container.innerHTML = '';
+            counterLabel.innerText = currentDeck.length;
             
             if (currentDeck.length === 0) {
-                container.innerHTML = '<div class="text-slate-400 font-medium">All sorted!</div>';
+                container.innerHTML = '<div class="text-slate-400 font-medium">Reflection Complete</div>';
+                document.getElementById('deck-counter').classList.add('hidden');
                 document.getElementById('completion-ui').classList.remove('hidden');
                 return;
             }
 
             activeCard = currentDeck[0];
             const cardEl = document.createElement('div');
-            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-xl p-6 flex items-center justify-center text-center font-bold text-slate-800';
+            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-2xl p-6 flex items-center justify-center text-center font-bold text-slate-800 text-lg md:text-xl transition-all duration-300 transform';
             cardEl.draggable = true;
             cardEl.innerText = activeCard.text;
             cardEl.id = "card-" + activeCard.id;
             
             cardEl.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text/plain', activeCard.id);
+                cardEl.classList.add('opacity-50', 'scale-95');
+            });
+            
+            cardEl.addEventListener('dragend', (e) => {
+                cardEl.classList.remove('opacity-50', 'scale-95');
             });
 
-            // Touch Support for mobile
+            // Mobile Touch
             cardEl.addEventListener('touchstart', handleTouchStart, {passive: false});
             cardEl.addEventListener('touchmove', handleTouchMove, {passive: false});
             cardEl.addEventListener('touchend', handleTouchEnd, {passive: false});
@@ -163,10 +200,7 @@
         }
 
         function processChoice(zoneType) {
-            // In this specific exercise, all cards are "Out of Control" actions, 
-            // but the prompt is asking to acknowledge they are NOT in control.
-            // Based on the user prompt: all 12 items are examples of things NOT in control.
-            
+            // These 12 scenarios are the external events (Out of Control)
             if (zoneType === 'out') {
                 showFeedback(activeCard);
                 outCount++;
@@ -174,22 +208,15 @@
                 currentDeck.shift();
                 renderNextCard();
             } else {
-                // Shake effect for wrong zone
                 const slot = document.getElementById('active-card-slot');
-                slot.classList.add('animate-bounce');
-                setTimeout(() => slot.classList.remove('animate-bounce'), 500);
+                slot.classList.add('shake');
+                setTimeout(() => slot.classList.remove('shake'), 400);
             }
         }
 
         function showFeedback(card) {
-            document.getElementById('modal-title').innerText = "Perspective Shift";
             document.getElementById('modal-bold-text').innerText = card.text;
             document.getElementById('modal-italic-text').innerText = card.feedback;
-            
-            const icon = document.getElementById('modal-icon');
-            icon.className = "w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-100 text-blue-600";
-            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
-            
             document.getElementById('feedback-modal').classList.remove('hidden');
         }
 
@@ -197,37 +224,40 @@
             document.getElementById('feedback-modal').classList.add('hidden');
         }
 
-        // Simple Touch Implementation
+        // Mobile Logic
         let touchStartX, touchStartY;
         function handleTouchStart(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
         }
         function handleTouchMove(e) {
             e.preventDefault();
             const touch = e.touches[0];
-            const card = e.target;
+            const card = e.currentTarget;
             card.style.position = 'fixed';
-            card.style.width = '300px';
-            card.style.left = (touch.clientX - 150) + 'px';
-            card.style.top = (touch.clientY - 50) + 'px';
+            card.style.width = '80vw';
+            card.style.maxWidth = '350px';
+            card.style.left = (touch.clientX - (parseInt(card.style.width)/2 || 150)) + 'px';
+            card.style.top = (touch.clientY - 60) + 'px';
             card.style.zIndex = 1000;
         }
         function handleTouchEnd(e) {
-            const card = e.target;
+            const card = e.currentTarget;
             const touch = e.changedTouches[0];
             const outZone = document.getElementById('out-of-control').getBoundingClientRect();
             const inZone = document.getElementById('in-control').getBoundingClientRect();
 
             card.style.position = 'static';
             card.style.zIndex = 1;
+            card.style.width = '100%';
 
             if (touch.clientX > outZone.left && touch.clientX < outZone.right && touch.clientY > outZone.top && touch.clientY < outZone.bottom) {
                 processChoice('out');
             } else if (touch.clientX > inZone.left && touch.clientX < inZone.right && touch.clientY > inZone.top && touch.clientY < inZone.bottom) {
                 processChoice('in');
             } else {
-                renderNextCard(); // Snap back
+                renderNextCard(); 
             }
         }
 
