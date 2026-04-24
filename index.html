@@ -6,10 +6,6 @@
     <title>In vs Out of Control Sorting</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .card-container {
-            min-height: 200px;
-            transition: all 0.3s ease;
-        }
         .draggable-card {
             cursor: grab;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -22,7 +18,7 @@
         .drop-zone {
             border: 2px dashed #cbd5e1;
             background: #f8fafc;
-            min-height: 300px;
+            min-height: 280px;
         }
         .drop-zone.drag-over {
             border-color: #3b82f6;
@@ -35,12 +31,11 @@
         }
         .font-main { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
+        .touch-dragging {
+            opacity: 0.9;
+            pointer-events: none;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        .shake { animation: shake 0.4s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 font-main p-4 md:p-8">
@@ -52,22 +47,22 @@
             <p class="text-slate-400 italic">Drag each card to where it truly belongs.</p>
         </div>
 
-        <!-- Main Board -->
+        <!-- Sorting Arena -->
         <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl p-6 shadow-md">
             
             <!-- Source Area -->
             <div id="source-container" class="flex flex-col items-center mb-10">
-                <div id="active-card-slot" class="w-full max-w-md h-52 flex items-center justify-center border-2 border-slate-100 rounded-2xl bg-slate-50/50 relative p-4">
-                    <!-- Cards will be injected here -->
+                <div id="active-card-slot" class="w-full max-w-md h-56 flex items-center justify-center border-2 border-slate-100 rounded-2xl bg-slate-50/50 relative p-4">
+                    <!-- Cards are rendered here -->
                 </div>
-                <div id="deck-counter" class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-tighter">
-                    Remaining Scenarios: <span id="cards-left">12</span>
+                <div id="deck-counter" class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    Cards Remaining: <span id="cards-left">12</span>
                 </div>
             </div>
 
             <!-- Targets -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Out of Control -->
+                <!-- Out of Control Zone -->
                 <div id="out-of-control" class="drop-zone p-8 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'out')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -77,7 +72,7 @@
                     <div id="count-out" class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-xs font-bold">0 Items</div>
                 </div>
 
-                <!-- In My Control -->
+                <!-- In My Control Zone -->
                 <div id="in-control" class="drop-zone p-8 rounded-2xl flex flex-col items-center text-center transition-all group" ondrop="handleDrop(event, 'in')" ondragover="allowDrop(event)" ondragleave="handleDragLeave(event)">
                     <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -95,32 +90,32 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
             </div>
             <h2 class="text-3xl font-black text-slate-800 mb-2">Great job!</h2>
-            <p class="text-slate-600 max-w-md mx-auto mb-6">You've successfully recognized that external triggers are out of your control, but your internal processing remains yours.</p>
-            <button onclick="location.reload()" class="px-8 py-3 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 shadow-lg">
+            <p class="text-slate-600 max-w-md mx-auto mb-6">You've recognized that while external triggers belong to the world, your internal response belongs to you.</p>
+            <button onclick="location.reload()" class="px-8 py-3 bg-[#1e293b] text-white font-bold rounded-xl hover:bg-slate-700 transition shadow-lg">
                 Restart Exercise
             </button>
         </div>
     </div>
 
-    <!-- Modal for Feedback -->
+    <!-- Feedback Modal -->
     <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
             <div class="p-8 md:p-10">
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div id="modal-icon-bg" class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg id="modal-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
                     </div>
-                    <h3 class="text-xl font-black text-slate-900 tracking-tight">Pause & Reflect</h3>
+                    <h3 id="modal-title" class="text-xl font-black text-slate-900 tracking-tight"></h3>
                 </div>
                 
                 <p id="modal-bold-text" class="text-slate-800 font-bold text-lg leading-relaxed mb-6"></p>
                 
-                <div class="bg-slate-50 border-l-4 border-blue-500 p-5 rounded-r-xl">
+                <div id="feedback-quote-box" class="border-l-4 p-5 rounded-r-xl shadow-inner">
                     <p id="modal-italic-text" class="text-slate-600 italic text-base leading-relaxed"></p>
                 </div>
 
-                <button onclick="closeModal()" class="mt-8 w-full py-4 bg-[#1e293b] text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-lg hover:shadow-xl active:scale-[0.98]">
-                    Continue to Next Card
+                <button onclick="closeModal()" class="mt-8 w-full py-4 bg-[#1e293b] text-white font-bold rounded-2xl hover:bg-slate-800 transition shadow-lg">
+                    Continue
                 </button>
             </div>
         </div>
@@ -128,18 +123,18 @@
 
     <script>
         const scenarios = [
-            { id: 1, type: 'out', text: "A patient is rude and dismissive from the moment they arrive. By the time they leave you are still replaying what they said.", feedback: "The interaction is not in your control. How long you carry it afterwards is." },
-            { id: 2, type: 'out', text: "A patient has been waiting for 45 minutes and is furious. They direct all of their frustration at you personally.", feedback: "The wait is not in your control. How you respond to their frustration is." },
-            { id: 3, type: 'out', text: "A patient calls you incompetent in front of a full waiting room.", feedback: "What they say is not in your control. Whether you take the bait is." },
-            { id: 4, type: 'out', text: "A patient refuses to follow any of the advice they have been given and keeps returning with the same problem.", feedback: "Their choices are not in your control. How you continue to show up for them is." },
-            { id: 5, type: 'out', text: "You handled a difficult interaction really well but the patient still left unhappy.", feedback: "Their feelings are not in your control. The quality of your response was." },
-            { id: 6, type: 'out', text: "You are on your fifth difficult interaction of the morning and you can feel your patience wearing thin.", feedback: "The volume of difficult patients is not in your control. Your reset between each one is." },
-            { id: 7, type: 'out', text: "A patient shares that they have had a really traumatic experience that explains their behaviour today.", feedback: "Their history is not in your control. Whether it changes how you respond to them is." },
-            { id: 8, type: 'out', text: "A patient pushes back repeatedly on a boundary you have set, insisting on an exception.", feedback: "Their pushback is not in your control. Whether the boundary holds is." },
-            { id: 9, type: 'out', text: "You are told the system is running two hours behind and patients are already complaining at the desk.", feedback: "The system is not in your control. The tone you set at the desk is." },
-            { id: 10, type: 'out', text: "A patient leaves a negative review about their experience that you feel is unfair and inaccurate.", feedback: "Their opinion is not in your control. How you document the interaction accurately and professionally is." },
-            { id: 11, type: 'out', text: "A patient is aggressive and you can feel your voice getting faster and louder in response.", feedback: "Their aggression is not in your control. Your tone and pace is." },
-            { id: 12, type: 'out', text: "You leave work still thinking about a difficult patient from this morning. You cannot switch off.", feedback: "The interaction is done. Whether you set it down at the river is." }
+            { id: 1, text: "A patient is rude and dismissive from the moment they arrive. By the time they leave you are still replaying what they said.", outPart: "The interaction is not in your control", inPart: "How long you carry it afterwards is" },
+            { id: 2, text: "A patient has been waiting for 45 minutes and is furious. They direct all of their frustration at you personally.", outPart: "The wait is not in your control", inPart: "How you respond to their frustration is" },
+            { id: 3, text: "A patient calls you incompetent in front of a full waiting room.", outPart: "What they say is not in your control", inPart: "Whether you take the bait is" },
+            { id: 4, text: "A patient refuses to follow any of the advice they have been given and keeps returning with the same problem.", outPart: "Their choices are not in your control", inPart: "How you continue to show up for them is" },
+            { id: 5, text: "You handled a difficult interaction really well but the patient still left unhappy.", outPart: "Their feelings are not in your control", inPart: "The quality of your response was" },
+            { id: 6, text: "You are on your fifth difficult interaction of the morning and you can feel your patience wearing thin.", outPart: "The volume of difficult patients is not in your control", inPart: "Your reset between each one is" },
+            { id: 7, text: "A patient shares that they have had a really traumatic experience that explains their behaviour today.", outPart: "Their history is not in your control", inPart: "Whether it changes how you respond to them is" },
+            { id: 8, text: "A patient pushes back repeatedly on a boundary you have set, insisting on an exception.", outPart: "Their pushback is not in your control", inPart: "Whether the boundary holds is" },
+            { id: 9, text: "You are told the system is running two hours behind and patients are already complaining at the desk.", outPart: "The system is not in your control", inPart: "The tone you set at the desk is" },
+            { id: 10, text: "A patient leaves a negative review about their experience that you feel is unfair and inaccurate.", outPart: "Their opinion is not in your control", inPart: "How you document the interaction accurately and professionally is" },
+            { id: 11, text: "A patient is aggressive and you can feel your voice getting faster and louder in response.", outPart: "Their aggression is not in your control", inPart: "Your tone and pace is" },
+            { id: 12, text: "You leave work still thinking about a difficult patient from this morning. You cannot switch off.", outPart: "The interaction is done", inPart: "Whether you set it down at the river is" }
         ];
 
         let currentDeck = [...scenarios].sort(() => Math.random() - 0.5);
@@ -154,7 +149,7 @@
             counterLabel.innerText = currentDeck.length;
             
             if (currentDeck.length === 0) {
-                container.innerHTML = '<div class="text-slate-400 font-medium">Reflection Complete</div>';
+                container.innerHTML = '<div class="text-slate-400 font-medium">Activity Complete</div>';
                 document.getElementById('deck-counter').classList.add('hidden');
                 document.getElementById('completion-ui').classList.remove('hidden');
                 return;
@@ -162,21 +157,20 @@
 
             activeCard = currentDeck[0];
             const cardEl = document.createElement('div');
-            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-2xl p-6 flex items-center justify-center text-center font-bold text-slate-800 text-lg md:text-xl transition-all duration-300 transform';
+            cardEl.className = 'draggable-card w-full h-full bg-white shadow-xl border border-slate-200 rounded-2xl p-6 flex items-center justify-center text-center font-bold text-slate-800 text-lg md:text-xl transition-all duration-300';
             cardEl.draggable = true;
             cardEl.innerText = activeCard.text;
             cardEl.id = "card-" + activeCard.id;
             
             cardEl.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text/plain', activeCard.id);
-                cardEl.classList.add('opacity-50', 'scale-95');
+                cardEl.classList.add('opacity-40', 'scale-90');
             });
             
             cardEl.addEventListener('dragend', (e) => {
-                cardEl.classList.remove('opacity-50', 'scale-95');
+                cardEl.classList.remove('opacity-40', 'scale-90');
             });
 
-            // Mobile Touch
             cardEl.addEventListener('touchstart', handleTouchStart, {passive: false});
             cardEl.addEventListener('touchmove', handleTouchMove, {passive: false});
             cardEl.addEventListener('touchend', handleTouchEnd, {passive: false});
@@ -200,23 +194,44 @@
         }
 
         function processChoice(zoneType) {
-            // These 12 scenarios are the external events (Out of Control)
             if (zoneType === 'out') {
-                showFeedback(activeCard);
                 outCount++;
                 document.getElementById('count-out').innerText = `${outCount} Items`;
-                currentDeck.shift();
-                renderNextCard();
             } else {
-                const slot = document.getElementById('active-card-slot');
-                slot.classList.add('shake');
-                setTimeout(() => slot.classList.remove('shake'), 400);
+                inCount++;
+                document.getElementById('count-in').innerText = `${inCount} Items`;
             }
+            
+            showFeedback(activeCard, zoneType);
+            currentDeck.shift();
+            renderNextCard();
         }
 
-        function showFeedback(card) {
+        function showFeedback(card, zoneType) {
+            const modalTitle = document.getElementById('modal-title');
+            const italicText = document.getElementById('modal-italic-text');
+            const iconBg = document.getElementById('modal-icon-bg');
+            const icon = document.getElementById('modal-icon');
+            const quoteBox = document.getElementById('feedback-quote-box');
+
             document.getElementById('modal-bold-text').innerText = card.text;
-            document.getElementById('modal-italic-text').innerText = card.feedback;
+
+            if (zoneType === 'out') {
+                modalTitle.innerText = "Out of Your Control";
+                // Uses " " instead of ( )
+                italicText.innerText = `"${card.outPart}. ${card.inPart}."`;
+                iconBg.className = "w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0";
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />';
+                quoteBox.className = "bg-slate-50 border-l-4 border-blue-500 p-5 rounded-r-xl shadow-inner";
+            } else {
+                modalTitle.innerText = "In Your Control";
+                // Flipped with " " and italics
+                italicText.innerText = `"${card.inPart} in your control. But ${card.outPart.charAt(0).toLowerCase() + card.outPart.slice(1)}."`;
+                iconBg.className = "w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0";
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />';
+                quoteBox.className = "bg-slate-50 border-l-4 border-green-500 p-5 rounded-r-xl shadow-inner";
+            }
+
             document.getElementById('feedback-modal').classList.remove('hidden');
         }
 
@@ -224,21 +239,20 @@
             document.getElementById('feedback-modal').classList.add('hidden');
         }
 
-        // Mobile Logic
-        let touchStartX, touchStartY;
         function handleTouchStart(e) {
             const touch = e.touches[0];
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
+            e.currentTarget.classList.add('touch-dragging');
         }
         function handleTouchMove(e) {
             e.preventDefault();
             const touch = e.touches[0];
             const card = e.currentTarget;
             card.style.position = 'fixed';
-            card.style.width = '80vw';
-            card.style.maxWidth = '350px';
-            card.style.left = (touch.clientX - (parseInt(card.style.width)/2 || 150)) + 'px';
+            card.style.width = '85vw';
+            card.style.maxWidth = '360px';
+            card.style.left = (touch.clientX - (parseInt(card.style.width)/2 || 180)) + 'px';
             card.style.top = (touch.clientY - 60) + 'px';
             card.style.zIndex = 1000;
         }
@@ -248,6 +262,7 @@
             const outZone = document.getElementById('out-of-control').getBoundingClientRect();
             const inZone = document.getElementById('in-control').getBoundingClientRect();
 
+            card.classList.remove('touch-dragging');
             card.style.position = 'static';
             card.style.zIndex = 1;
             card.style.width = '100%';
